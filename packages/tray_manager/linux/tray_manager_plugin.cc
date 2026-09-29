@@ -139,6 +139,20 @@ static FlMethodResponse* set_title(TrayManagerPlugin* self, FlValue* args) {
       fl_method_success_response_new(fl_value_new_bool(true)));
 }
 
+// StatusNotifierItem hosts show the item's Title as its tooltip and fall back
+// to the raw id when it is empty, so map setToolTip onto the indicator title.
+static FlMethodResponse* set_tool_tip(TrayManagerPlugin* self,
+                                      FlValue* args) {
+  const char* tool_tip =
+      fl_value_get_string(fl_value_lookup_string(args, "toolTip"));
+
+  if (indicator)
+    app_indicator_set_title(indicator, tool_tip);
+
+  return FL_METHOD_RESPONSE(
+      fl_method_success_response_new(fl_value_new_bool(true)));
+}
+
 static FlMethodResponse* set_context_menu(TrayManagerPlugin* self,
                                           FlValue* args) {
   menu = _create_menu(fl_value_lookup_string(args, "menu"));
@@ -164,6 +178,8 @@ static void tray_manager_plugin_handle_method_call(TrayManagerPlugin* self,
     response = set_icon(self, args);
   } else if (strcmp(method, "setTitle") == 0) {
     response = set_title(self, args);
+  } else if (strcmp(method, "setToolTip") == 0) {
+    response = set_tool_tip(self, args);
   } else if (strcmp(method, "setContextMenu") == 0) {
     response = set_context_menu(self, args);
   } else {
