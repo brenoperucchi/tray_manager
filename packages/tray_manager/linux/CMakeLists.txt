@@ -12,6 +12,9 @@ add_library(${PLUGIN_NAME} SHARED
   "tray_manager_plugin.cc"
 )
 apply_standard_settings(${PLUGIN_NAME})
+# libayatana-appindicator 0.6 deprecates app_indicator_new and friends; the host
+# app's standard settings add -Werror, which would otherwise break the build.
+target_compile_options(${PLUGIN_NAME} PRIVATE -Wno-deprecated-declarations)
 set_target_properties(${PLUGIN_NAME} PROPERTIES
   CXX_VISIBILITY_PRESET hidden)
 target_compile_definitions(${PLUGIN_NAME} PRIVATE FLUTTER_PLUGIN_IMPL)
